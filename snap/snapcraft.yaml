@@ -13,10 +13,16 @@ apps:
     command: flutter_with_dependencies
     plugs: [home, desktop, desktop-legacy, network, network-bind, opengl, x11, audio-playback]
     extensions: [gnome]
+    environment:
+      LD_LIBRARY_PATH: $LD_LIBRARY_PATH:$SNAP/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/blas:$SNAP/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/lapack
 
 parts:
   flutter-with-dependencies:
     source: .
     plugin: flutter
     flutter-target: lib/main.dart
+    build-packages: [libmpv-dev]
+    stage-packages:
+      - libmpv1 # Trying to resolve mpv dependency complaint, but not helping
+      - libblas3 # Added because I got error loading libblas.so.3 when running snap
 
