@@ -1,6 +1,6 @@
 {
-    "name": "flutter_with_depedencies",
-    "short_name": "flutter_with_depedencies",
+    "name": "flutter_with_dependencies",
+    "short_name": "flutter_with_dependencies",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

@@ -1,16 +1,14 @@
-# flutter_with_depedencies
+# Flutter snap package
 
-A new Flutter project.
+Add snapcraft.yaml to create snap package for basic flutter example.
 
-## Getting Started
+## Make package
 
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+* Clone repository
+* Install snapcraft 7.5.4
+* Build snap package
+```snapcraft --verbose```
+* Install snap package
+```sudo snap install flutter-with-dependencies_0.1_amd64.snap```
+* Run snap package
+```flutter-with-dependencies```

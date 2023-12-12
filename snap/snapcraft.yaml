@@ -1,0 +1,22 @@
+name: flutter-with-dependencies
+base: core22 # the base snap is the execution environment for this snap
+version: '0.1'
+summary: Minimal template app to test/debug dependencies
+description: |
+  See summary
+
+grade: devel # must be 'stable' to release into candidate/stable channels
+confinement: devmode # use 'strict' once you have the right plugs and slots
+
+apps:
+  flutter-with-dependencies:
+    command: flutter_with_dependencies
+    plugs: [home, desktop, desktop-legacy, network, network-bind, opengl, x11, audio-playback]
+    extensions: [gnome]
+
+parts:
+  flutter-with-dependencies:
+    source: .
+    plugin: flutter
+    flutter-target: lib/main.dart
+
