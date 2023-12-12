@@ -5,7 +5,6 @@
 import 'package:flutter/material.dart';
 
 import 'package:media_kit/media_kit.dart'; // Provides [Player], [Media], [Playlist] etc.
-import 'package:media_kit_video/media_kit_video.dart'; // Provides [VideoController] & [Video] etc.
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -28,14 +27,14 @@ class MyScreenState extends State<MyScreen> {
   // Create a [Player] to control playback.
   late final player = Player();
   // Create a [VideoController] to handle video output from [Player].
-  late final controller = VideoController(player);
+  // late final controller = VideoController(player);
 
   @override
   void initState() {
     super.initState();
     // Play a [Media] or [Playlist].
-    player.open(Media(
-        'https://user-images.githubusercontent.com/28951144/229373695-22f88f13-d18f-4288-9bf1-c3e078d83722.mp4'));
+    player.setPlaylistMode(PlaylistMode.loop);
+    player.open(Media('assets/audio/ringtone.mp3'));
   }
 
   @override
@@ -51,7 +50,7 @@ class MyScreenState extends State<MyScreen> {
         width: MediaQuery.of(context).size.width,
         height: MediaQuery.of(context).size.width * 9.0 / 16.0,
         // Use [Video] widget to display video output.
-        child: Video(controller: controller),
+        // child: Video(controller: controller),
       ),
     );
   }
