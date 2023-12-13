@@ -10,6 +10,7 @@ void main() {
   WidgetsFlutterBinding.ensureInitialized();
   // Necessary initialization for package:media_kit.
   MediaKit.ensureInitialized();
+  print('Testing print functionality');
   runApp(
     const MaterialApp(
       home: MyScreen(),
