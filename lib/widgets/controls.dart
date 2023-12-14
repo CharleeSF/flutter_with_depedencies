@@ -82,7 +82,9 @@ class _ControlsWidgetState extends State<ControlsWidget> {
   }
 
   Future<void> _enableAudio() async {
+    print('BEFORE SET MICROPHONE ENABLED IN CONTROLS');
     await participant.setMicrophoneEnabled(true);
+    print('AFTER SET MICROPHONE ENABLED IN CONTROLS');
   }
 
   void _disableVideo() async {

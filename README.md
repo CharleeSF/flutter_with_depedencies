@@ -27,7 +27,7 @@ livekit-cli create-token \
 ```
 * Build + run snap:
 ```
-snapcraft --verbose
+snapcraft --verbose # I created the snap with snapcraft 7.5.4
 sudo snap install --devmode flutter-with-dependencies_0.1_amd64.snap
 flutter-with-dependencies
 ```
