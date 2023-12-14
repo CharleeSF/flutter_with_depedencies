@@ -1,23 +1,14 @@
-# Flutter snap package
+# LiveKit Flutter Example
 
-Add snapcraft.yaml to create snap package for basic flutter example.
+This app implements a video room using LiveKit's Flutter SDK. Designed to run for iOS, Android, Web, Mac, and Windows.
 
-The mediakit package was added by copying flutter dependencies and code snipped from https://pub.dev/packages/media_kit
+## Quickstart
 
-An attempt was done to add required dependencies to snapcraft.yaml, but it seems incorrect
+Run example:
 
-## Make package
-
-* Clone repository
-* Install snapcraft 7.5.4
-* Build snap package
-```snapcraft --verbose```
-* Install snap package
-```sudo snap install flutter-with-dependencies_0.1_amd64.snap```
-* Run snap package
-```flutter-with-dependencies```
-
-## Describing issue
-
-Once mediakit dependency was added with its example the application wouldn't run as snap-package anymore.
-It was tested that without snap it does work (by doing ```flutter run --debug``` and selecting linux).
+```bash
+flutter pub get
+# Due to the inconvenience of typing on mobile devices, 
+# you can autofill URL and TOKEN for first run in debug mode.
+flutter run --dart-define=URL=wss://${LIVEKIT_SERVER_IP_OR_DOMAIN} --dart-define=TOKEN=${YOUR_TOKEN}
+```

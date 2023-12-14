@@ -1,58 +1,42 @@
-// Make sure to add following packages to pubspec.yaml:
-// * media_kit
-// * media_kit_video
-// * media_kit_libs_video
 import 'package:flutter/material.dart';
+import 'package:flutter_window_close/flutter_window_close.dart';
+import 'package:livekit_client/livekit_client.dart';
+import 'package:livekit_example/theme.dart';
+import 'package:logging/logging.dart';
+import 'package:intl/intl.dart';
+import 'pages/connect.dart';
+import 'utils.dart';
 
-import 'package:media_kit/media_kit.dart'; // Provides [Player], [Media], [Playlist] etc.
+void main() async {
+  final format = DateFormat('HH:mm:ss');
+  // configure logs for debugging
+  Logger.root.level = Level.FINE;
+  Logger.root.onRecord.listen((record) {
+    print('${format.format(record.time)}: ${record.message}');
+  });
 
-void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  // Necessary initialization for package:media_kit.
-  MediaKit.ensureInitialized();
-  print('Testing print functionality');
-  runApp(
-    const MaterialApp(
-      home: MyScreen(),
-    ),
-  );
+
+  if (lkPlatformIsDesktop()) {
+    FlutterWindowClose.setWindowShouldCloseHandler(() async {
+      await onWindowShouldClose?.call();
+      return true;
+    });
+  }
+
+  runApp(const LiveKitExampleApp());
 }
 
-class MyScreen extends StatefulWidget {
-  const MyScreen({Key? key}) : super(key: key);
-  @override
-  State<MyScreen> createState() => MyScreenState();
-}
-
-class MyScreenState extends State<MyScreen> {
-  // Create a [Player] to control playback.
-  late final player = Player();
-  // Create a [VideoController] to handle video output from [Player].
-  // late final controller = VideoController(player);
+class LiveKitExampleApp extends StatelessWidget {
+  //
+  const LiveKitExampleApp({
+    Key? key,
+  }) : super(key: key);
 
   @override
-  void initState() {
-    super.initState();
-    // Play a [Media] or [Playlist].
-    player.setPlaylistMode(PlaylistMode.loop);
-    player.open(Media('assets/audio/ringtone.mp3'));
-  }
-
-  @override
-  void dispose() {
-    player.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: SizedBox(
-        width: MediaQuery.of(context).size.width,
-        height: MediaQuery.of(context).size.width * 9.0 / 16.0,
-        // Use [Video] widget to display video output.
-        // child: Video(controller: controller),
-      ),
-    );
-  }
+  Widget build(BuildContext context) => MaterialApp(
+        title: 'LiveKit Flutter Example',
+        theme: LiveKitTheme().buildThemeData(context),
+        home: const ConnectPage(),
+      );
 }
