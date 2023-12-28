@@ -18,6 +18,7 @@ apps:
     plugs: &_plugs
       - opengl
       - wayland
+      - personal-files-plug
     environment: &_environment
       XDG_DATA_HOME: $SNAP_USER_DATA
       XDG_DATA_DIRS: $SNAP/usr/share
@@ -43,6 +44,10 @@ plugs:
     interface: content
     target: $SNAP/graphics
     default-provider: mesa-core22
+  personal-files-plug:
+    interface: personal-files
+    write:
+    - $HOME/.cache
 
 # Copied from iot-example-graphics-snap
 environment:
