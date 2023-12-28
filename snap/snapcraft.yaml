@@ -9,10 +9,78 @@ grade: devel # must be 'stable' to release into candidate/stable channels
 confinement: devmode # use 'strict' once you have the right plugs and slots
 
 apps:
+  # Copied from iot-example-graphics-snap
   flutter-with-dependencies:
-    command: bin/example # I don't get when we have to prefix with bin/ but in this case I had to
-    plugs: [home, desktop, desktop-legacy, network, network-bind, opengl, x11, audio-playback]
-    extensions: [gnome]
+    command-chain: &_command-chain
+      - bin/graphics-core22-wrapper
+      - bin/wayland-launch
+    command: &_command bin/example
+    plugs: &_plugs
+      - opengl
+      - wayland
+    environment: &_environment
+      XDG_DATA_HOME: $SNAP_USER_DATA
+      XDG_DATA_DIRS: $SNAP/usr/share
+      GDK_GL: gles
+
+  # Copied from iot-example-graphics-snap
+  daemon:
+    daemon: simple
+    restart-delay: 3s
+    restart-condition: always
+    command-chain: *_command-chain
+    command: *_command
+    plugs: *_plugs
+    environment: *_environment
+
+
+# This is one of four snippets that relate to providing the userspace graphics needed by your application.
+# You can treat this as "magic" so long as you don't need to make changes.
+# On the Mir website there's a lot more detail on [the graphics-core22 Snap interface](https://mir-server.io/docs/the-graphics-core22-snap-interface) and it's use.
+# Copied from iot-example-graphics-snap
+plugs:
+  graphics-core22:
+    interface: content
+    target: $SNAP/graphics
+    default-provider: mesa-core22
+
+# Copied from iot-example-graphics-snap
+environment:
+  # Other, generally useful environment settings...
+  # XDG config
+  XDG_CACHE_HOME:  $SNAP_USER_COMMON/.cache
+  XDG_CONFIG_HOME: $SNAP_USER_DATA/.config
+  XDG_CONFIG_DIRS: $SNAP/etc/xdg
+  XDG_DATA_DIRS:   $SNAP/usr/local/share:$SNAP/usr/share
+  # XKB config
+  XKB_CONFIG_ROOT: $SNAP/usr/share/X11/xkb
+
+# The `layout` ensures that files can be found by applications where they are expected by the toolkit or application.
+# Copied from iot-example-graphics-snap
+layout:
+  /usr/share/libdrm:
+    bind: $SNAP/graphics/libdrm
+  /usr/share/drirc.d:
+    symlink: $SNAP/graphics/drirc.d
+  # Other, generally useful paths
+  /usr/share/fonts:
+    bind: $SNAP/usr/share/fonts
+  /usr/share/icons:
+    bind: $SNAP/usr/share/icons
+  /usr/share/sounds:
+    bind: $SNAP/usr/share/sounds
+  /etc/fonts:
+    bind: $SNAP/etc/fonts
+  # GTK
+  /usr/lib/$CRAFT_ARCH_TRIPLET/gdk-pixbuf-2.0:
+    bind: $SNAP/usr/lib/$CRAFT_ARCH_TRIPLET/gdk-pixbuf-2.0
+  /usr/lib/${CRAFT_ARCH_TRIPLET}/gtk-3.0:
+    bind: $SNAP/usr/lib/${CRAFT_ARCH_TRIPLET}/gtk-3.0
+  /usr/share/mime:
+    bind: $SNAP/usr/share/mime
+  /etc/gtk-3.0:
+    bind: $SNAP/etc/gtk-3.0
+
 
 parts:
   # We build our own flutter to be able to build our flutter application.
@@ -62,3 +130,82 @@ parts:
       ls build/linux/*/$BUILD_TYPE/bundle/*
       cp -r build/linux/*/$BUILD_TYPE/bundle/* $CRAFT_PART_INSTALL/bin/
       ls $CRAFT_PART_INSTALL/bin/
+    stage-packages:
+      - libxcursor1 # Added based on linter comments
+      - libxcomposite1 # Added based on linter comments
+      - libxinerama1 # Added based on linter comments
+      - libxcursor1 # Added based on linter comments
+      - gstreamer1.0-libav # Added based on linter comments
+      - libnss3-tools # Added based on linter comments
+      - libatk-bridge2.0-0 # Added based on linter comments
+      - libcups2-dev # Added based on linter comments
+      - libxkbcommon-x11-0 # Added based on linter comments
+      - libxcomposite-dev # Added based on linter comments
+      - libxrandr2 # Added based on linter comments
+      - libgbm-dev # Added based on linter comments
+      - libgtk-3-0 # Added based on linter comments
+
+
+  # gsettings, pixbuf and immodules are not needed by all snaps,
+  # but they are so common a requirement include them here
+  # Copied from iot-example-graphics-snap
+  gsettings+pixbuf+immodules:
+    plugin: nil
+    build-packages:
+      - libgdk-pixbuf2.0-0
+      - librsvg2-common
+      - shared-mime-info
+      - libgtk-3-0
+    override-build: |
+      craftctl default
+      # Update mime database
+      update-mime-database ${CRAFT_PART_INSTALL}/usr/share/mime
+      # build immodules cache
+      mkdir -p ${CRAFT_PART_INSTALL}/usr/lib/${CRAFT_ARCH_TRIPLET}/gtk-3.0/3.0.0/
+      /usr/lib/${CRAFT_ARCH_TRIPLET}/libgtk-3-0/gtk-query-immodules-3.0 > ${CRAFT_PART_INSTALL}/usr/lib/${CRAFT_ARCH_TRIPLET}/gtk-3.0/3.0.0/immodules.cache
+    stage-packages:
+      - librsvg2-common
+      - gsettings-desktop-schemas
+      - libglib2.0-bin
+    override-prime: |
+      craftctl default
+      # Compile the gsettings schemas
+      /usr/lib/${CRAFT_ARCH_TRIPLET}/glib-2.0/glib-compile-schemas "$CRAFT_PRIME/usr/share/glib-2.0/schemas"
+      # Index the pixbuf loaders
+      LOADERS_PATH=$(echo ${CRAFT_PRIME}/usr/lib/${CRAFT_ARCH_TRIPLET}/gdk-pixbuf-2.0/*/loaders)
+      QUERY_LOADERS=/usr/lib/${CRAFT_ARCH_TRIPLET}/gdk-pixbuf-2.0/gdk-pixbuf-query-loaders
+      GDK_PIXBUF_MODULEDIR=${LOADERS_PATH} ${QUERY_LOADERS} > ${LOADERS_PATH}/../loaders.cache
+      sed s!$CRAFT_PRIME!!g --in-place ${LOADERS_PATH}/../loaders.cache
+
+  # Some utility scripts for setting up the Wayland environment
+  # Copied from iot-example-graphics-snap
+  setup:
+    plugin: dump
+    source: wayland-launch
+    override-build: |
+      # The plugs needed to run Wayland. (wayland-launch checks them, setup.sh connects them)
+      # You may add further plugs here if you want these options
+      PLUGS="opengl wayland graphics-core22"
+      sed --in-place "s/%PLUGS%/$PLUGS/g" $CRAFT_PART_BUILD/bin/wayland-launch
+      sed --in-place "s/%PLUGS%/$PLUGS/g" $CRAFT_PART_BUILD/bin/setup.sh
+      craftctl default
+    stage-packages:
+      - inotify-tools
+
+  # Copied from iot-example-graphics-snap
+  graphics-core22:
+    after:
+      - flutter-with-dependencies
+      - gsettings+pixbuf+immodules
+      - setup
+    source: https://github.com/MirServer/graphics-core22.git
+    plugin: dump
+    override-prime: |
+      craftctl default
+      ${CRAFT_PART_SRC}/bin/graphics-core22-cleanup mesa-core22 nvidia-core22
+      cd "$CRAFT_PRIME/usr/share/"
+      rm -rf bug drirc.d glvnd libdrm lintian man
+      rm -rf applications apport bash-completion dbus-1 doc-base doc gtk-doc\
+             help pkgconfig libthai metainfo themes thumbnailers xml
+    prime:
+      - bin/graphics-core22-wrapper

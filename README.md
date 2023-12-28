@@ -1,62 +1,32 @@
-# LiveKit Flutter Example
+# Flutter snap package displayed on IoT
 
-The sourcecode is a copy of Livekit's Flutter SDK example code: https://github.com/livekit/client-sdk-flutter/tree/main/example
-This app implements a video room using LiveKit's Flutter SDK.
+Add snapcraft.yaml to create snap package for basic flutter example.
 
-snapcraft.yaml was added for snap packaging.
+## Install dependencies
 
-Unfortunately, the resulting snap does not work as expected.
+```sudo snap install ubuntu-frame --channel=22```
 
-Issue:
-When the client connects to the livekit server with microphone enabled the app freezes.
-When the client connects to the livekit server with microphone disabled, video works as expected.
-If already connected with microphone disabled, you enable the microphone: app freezes again.
+```sudo snap install frame-it --classic```
 
-## Reproduction
+## Make and install package
 
-Run example:
+* Clone repository
+* Install snapcraft 7.5.4
+* Build snap package
+```snapcraft --verbose```
+* Install snap package
+```sudo snap install flutter-with-dependencies_0.1_amd64.snap --devmode```
 
-* Install livekit server: https://docs.livekit.io/realtime/self-hosting/local/#start-the-server-in-dev-mode
-* Install livekit CLI: https://docs.livekit.io/realtime/cli-setup/
-* Create token:
-```
-livekit-cli create-token \
-    --api-key devkey --api-secret secret \
-    --join --room my-first-room --identity user1 \
-    --valid-for 24h
-```
-* Build + run snap:
-```
-snapcraft --verbose # I created the snap with snapcraft 7.5.4
-sudo snap install --devmode flutter-with-dependencies_0.1_amd64.snap
-flutter-with-dependencies
-```
-* In server URL fill in: ws://127.0.0.1:7880
-* In token fill in the output of 'Create token' step (the token after 'access token: ')
-* In shared key fill in: devkey
-* Click connect
+## Do wayland setup?
 
-If you are trying to mimic error behavior:
-* Leave default options and click join --> App should load video but freeze almost immediately after
+This is listed in the tutorial of the original example: https://discourse.ubuntu.com/t/packaging-a-flutter-application-demo-as-an-iot-gui/29075 and I did it initially for the example, but I didn't do it again.
 
-If you are trying to mimic behavior without microphone:
-* Disable microphone and click join --> App should load video and keep working
+```/snap/flutter-with-dependencies/current/bin/setup.sh```
 
-## Running linux app without snapp
+## Connect interface
 
-Note that the app doesn't freeze when running the app in linux without a snap environment.
-You should be able to build with these steps in case you want to verify/do debug steps:
-```
-# 'Install' flutter by cloning and setting path
-git clone https://github.com/flutter/flutter.git
-export PATH="$PATH:$(pwd)/flutter/bin" # If you want to make persistent, put in .bashrc (or other profile rc)
+```snap connect flutter-with-dependencies:wayland ubuntu-frame:wayland```
 
-# Install dependencies
-sudo apt-get install -y clang cmake git ninja-build pkg-config libgtk-3-dev liblzma-dev libstdc++-12-dev
+## Run
 
-# Check installation
-flutter doctor
-
-# Build
-flutter run --debug # And then select linux
-```
+```frame-it flutter-with-dependencies```
