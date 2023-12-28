@@ -18,11 +18,13 @@ apps:
     plugs: &_plugs
       - opengl
       - wayland
-      - personal-files-plug
+      - audio-playback
+      - home
     environment: &_environment
       XDG_DATA_HOME: $SNAP_USER_DATA
       XDG_DATA_DIRS: $SNAP/usr/share
       GDK_GL: gles
+      LD_LIBRARY_PATH: "$LD_LIBRARY_PATH:$SNAP/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/pulseaudio"
 
   # Copied from iot-example-graphics-snap
   daemon:
@@ -44,10 +46,6 @@ plugs:
     interface: content
     target: $SNAP/graphics
     default-provider: mesa-core22
-  personal-files-plug:
-    interface: personal-files
-    write:
-    - $HOME/.cache
 
 # Copied from iot-example-graphics-snap
 environment:
@@ -149,6 +147,11 @@ parts:
       - libxrandr2 # Added based on linter comments
       - libgbm-dev # Added based on linter comments
       - libgtk-3-0 # Added based on linter comments
+      - pulseaudio-utils
+      - libglu1-mesa
+      - freeglut3
+      - libpulse0
+      - libgtk-3-0
 
 
   # gsettings, pixbuf and immodules are not needed by all snaps,
