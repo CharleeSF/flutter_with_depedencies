@@ -16,7 +16,7 @@ If already connected with microphone disabled, you enable the microphone: app fr
 
 Run example:
 
-* Install livekit server: https://docs.livekit.io/realtime/self-hosting/local/#start-the-server-in-dev-mode
+* Install livekit and start server: https://docs.livekit.io/realtime/self-hosting/local/#start-the-server-in-dev-mode
 * Install livekit CLI: https://docs.livekit.io/realtime/cli-setup/
 * Create token:
 ```
