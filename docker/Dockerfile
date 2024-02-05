@@ -17,7 +17,8 @@ RUN apt-get install -y clang cmake git ninja-build pkg-config libgtk-3-dev liblz
 
 RUN apt-get install -y alsa-utils
 RUN apt-get install -y alsa-base pulseaudio
-RUN apt-get install -y  libmpv-dev
+RUN apt-get install -y libmpv-dev
+RUN apt-get install -y libpulse0
 
 RUN curl https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/flutter_linux_3.16.8-stable.tar.xz | tar -xJf -
 RUN git config --global --add safe.directory /flutter
@@ -58,8 +59,8 @@ WORKDIR /home/saltoks
 
 COPY --from=builder /flutter-app/build/linux/x64/release/bundle /home/saltoks
 
-COPY docker/startup.sh .
+COPY docker/startup.sh ./files/startup.sh
 
 ENV HOME=/home/saltoks
 
-CMD ["./startup.sh"]
+CMD ["./files/startup.sh"]

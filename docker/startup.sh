@@ -13,5 +13,7 @@ fi
 
 ls -l $WAYLAND_SOCKET
 
-strace -tt -T -o /home/saltoks/straces/livekit_desktop1.log /home/saltoks/example
+ls -l /home/saltoks/straces
+
+strace -f -tt -T -o /home/saltoks/straces/livekit_core1.log /home/saltoks/example
 
