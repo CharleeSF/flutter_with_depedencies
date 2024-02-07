@@ -5,13 +5,13 @@ services:
     # image: docker.io/library/ssi-image
     # image: docker.io/library/pyphoto
     volumes:
-      - /run/user/0:/tmp
-      - /run/pulse:/tmp/pulse
-      - /run/user/1000/bus:/run/user/1000/bus
-      - /home/charlee-clay/straces:/home/saltoks/straces
-      - /home/charlee-clay/files:/home/saltoks/files
-      - /var/run/dbus/system_bus_socket:/var/run/dbus/system_bus_socket
-      - /home/charlee-clay/config:/home/saltoks/.local/share/io.livekit.example.example/
+      - /run/user/0:/tmp # Required for wayland in /run/user/0/wayland-0
+      - /run/pulse:/tmp/pulse # Required to access pulseaudio
+      - /run/user/1000/bus:/run/user/1000/bus # Session bus
+      - /home/charlee-clay/straces:/home/saltoks/straces # Storing traces to mounted volume
+      - /home/charlee-clay/files:/home/saltoks/files # Where I put my adapted startup.sh so I can change quickly
+      - /var/run/dbus/system_bus_socket:/var/run/dbus/system_bus_socket # Accessing networkmanager (apparently)
+      - /home/charlee-clay/config:/home/saltoks/.local/share/io.livekit.example.example/ # Where livekit searches preexisting config
     environment:
       - XDG_RUNTIME_DIR=/tmp
       - WAYLAND_DISPLAY=wayland-0
