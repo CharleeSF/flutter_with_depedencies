@@ -15,10 +15,8 @@ RUN apt-get install -y curl git wget unzip zip libgconf-2-4 gdb libstdc++6 libgl
 # Dependencies for flutter linux build
 RUN apt-get install -y clang cmake git ninja-build pkg-config libgtk-3-dev liblzma-dev libstdc++-12-dev
 
-RUN apt-get install -y alsa-utils
-RUN apt-get install -y alsa-base pulseaudio
+# Dependencies building flutter app
 RUN apt-get install -y libmpv-dev
-RUN apt-get install -y libpulse0
 
 RUN curl https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/flutter_linux_3.16.8-stable.tar.xz | tar -xJf -
 RUN git config --global --add safe.directory /flutter
@@ -27,15 +25,15 @@ ENV PATH "$PATH:/flutter/bin"
 
 RUN flutter doctor -v
 
-ARG GITLAB_USERNAME
-ARG GITLAB_TOKEN
-ENV GITLAB_USERNAME=${GITLAB_USERNAME}
-ENV GITLAB_TOKEN=${GITLAB_TOKEN}
-
-# Use cache so that submodules can use credentials too?
-RUN git clone --branch=add-livekit-dependency https://github.com/CharleeSF/flutter_with_depedencies.git flutter-app
-
-RUN cd flutter-app && flutter build linux
+RUN mkdir flutter-app
+WORKDIR flutter-app
+COPY images images
+COPY lib lib
+COPY linux linux
+COPY pubspec.yaml .
+COPY pubspec.lock .
+RUN ls
+RUN flutter build linux
 
 # Stage 2: Runtime Stage
 FROM ubuntu:22.04
