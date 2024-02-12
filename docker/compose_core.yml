@@ -1,7 +1,7 @@
 
 services:
   livekit:
-    image: docker.io/library/livekit-image
+    image: iotedgetest8ccd7.azurecr.io/iotedge-modules-test:livekit-auto-load
     # image: docker.io/library/ssi-image
     # image: docker.io/library/pyphoto
     volumes:
@@ -16,6 +16,9 @@ services:
       - XDG_RUNTIME_DIR=/tmp
       - WAYLAND_DISPLAY=wayland-0
       - DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1000/bus
+      - URL=ws://10.42.0.1:7880
+      - TOKEN=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MDc4NDA3NTQsImlzcyI6ImRldmtleSIsIm5hbWUiOiJ1c2VyMSIsIm5iZiI6MTcwNzc1NDM1NCwic3ViIjoidXNlcjEiLCJ2aWRlbyI6eyJyb29tIjoibXktZmlyc3Qtcm9vbSIsInJvb21Kb2luIjp0cnVlfX0.H-jdl0c3WuQnVlZSRiZsYraW3cnz1Qfg0R4j3ehka0c
+      - E2EEKEY=devkey
     user:
       0:0
     devices:
