@@ -64,7 +64,11 @@ class _PreJoinPageState extends State<PreJoinPage> {
     _subscription =
         Hardware.instance.onDeviceChange.stream.listen(_loadDevices);
     Hardware.instance.enumerateDevices().then(_loadDevices);
+    Future.delayed(const Duration(milliseconds: 5000), () {
+      _join(context);
+    });
   }
+
 
   @override
   void deactivate() {
