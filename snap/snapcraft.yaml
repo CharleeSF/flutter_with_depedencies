@@ -59,6 +59,8 @@ parts:
     after: [flutter-git]
     source: .
     plugin: nil
+    stage-packages:
+      - strace
     override-build: |
       # when building locally artifacts can pollute the container and cause builds to fail
       # this helps increase reliability for local builds
