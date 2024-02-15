@@ -11,8 +11,21 @@ confinement: devmode # use 'strict' once you have the right plugs and slots
 apps:
   flutter-with-dependencies:
     command: bin/example # I don't get when we have to prefix with bin/ but in this case I had to
-    plugs: [home, desktop, desktop-legacy, network, network-bind, opengl, x11, audio-playback]
     extensions: [gnome]
+    plugs:
+      - home
+      - desktop
+      - network
+      - network-bind
+      - opengl
+      - x11
+      - camera
+      - audio-playback
+      - audio-record
+    environment:
+      URL: "ws://127.0.0.1:7880"
+      TOKEN: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3OTQ0MTY4MjYsImlzcyI6ImRldmtleSIsIm5hbWUiOiJ1c2VyMSIsIm5iZiI6MTcwODAxNjgyNiwic3ViIjoidXNlcjEiLCJ2aWRlbyI6eyJyb29tIjoibXktZmlyc3Qtcm9vbSIsInJvb21Kb2luIjp0cnVlfX0.az5Ea88BE08hU7i3fCVd3EUpjSdC_J5gvlS6mNmmz2g
+      E2EEKEY: devkey
 
 parts:
   # We build our own flutter to be able to build our flutter application.
