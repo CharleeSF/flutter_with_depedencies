@@ -1,0 +1,17 @@
+#!/bin/sh -e
+
+url="$(snapctl get url)"
+token="$(snapctl get token)"
+e2eekey="devkey"
+
+mkdir -p $SNAP_DATA/config
+
+if [ -n "$url" ]; then
+    echo "Setting url to $url"
+    echo "$url" > $SNAP_DATA/config/url
+fi
+
+if [ -n "$token" ]; then
+    echo "Setting token to $token"
+    echo "$token" > $SNAP_DATA/config/token
+fi

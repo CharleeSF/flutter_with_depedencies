@@ -43,4 +43,10 @@ wait_for "${WAYLAND_DISPLAY}"
 mkdir -p "$XDG_RUNTIME_DIR" -m 700
 unset DISPLAY
 
+# Temporarily do config here
+export URL="$(snapctl get url)"
+export TOKEN="$(snapctl get token)"
+export E2EEKEY="devkey"
+echo "Starting app with URL $URL and TOKEN $TOKEN and E2EEKEY $E2EEKEY"
+
 exec "$@"
