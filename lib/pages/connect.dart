@@ -49,9 +49,11 @@ class _ConnectPageState extends State<ConnectPage> {
       _checkPremissions();
     }
 
-    Future.delayed(const Duration(milliseconds: 1000), () {
-      _connect(context);
-    });
+    if (Platform.environment["AUTOSTART"] != null) {
+      Future.delayed(const Duration(milliseconds: 1000), () {
+        _connect(context);
+      });
+    }
     
   }
 
@@ -93,16 +95,6 @@ class _ConnectPageState extends State<ConnectPage> {
     _uriCtrl.text = envVars['URL'] ?? '';
     _tokenCtrl.text = envVars['TOKEN'] ?? '';
     _sharedKeyCtrl.text = envVars['E2EEKEY'] ?? '';
-    
-    // _uriCtrl.text = const bool.hasEnvironment('URL')
-    //     ? const String.fromEnvironment('URL')
-    //     : prefs.getString(_storeKeyUri) ?? '';
-    // _tokenCtrl.text = const bool.hasEnvironment('TOKEN')
-    //     ? const String.fromEnvironment('TOKEN')
-    //     : prefs.getString(_storeKeyToken) ?? '';
-    // _sharedKeyCtrl.text = const bool.hasEnvironment('E2EEKEY')
-    //     ? const String.fromEnvironment('E2EEKEY')
-    //     : prefs.getString(_storeKeySharedKey) ?? '';
 
     print("CONNECTION VARIABLES:");
     print("_uriCtrL: ${_uriCtrl.text}");
