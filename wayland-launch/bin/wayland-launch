@@ -47,6 +47,7 @@ unset DISPLAY
 export URL="$(snapctl get url)"
 export TOKEN="$(snapctl get token)"
 export E2EEKEY="devkey"
-echo "Starting app with URL $URL and TOKEN $TOKEN and E2EEKEY $E2EEKEY"
+export AUTOJOIN="$(snapctl get autojoin)"
+echo "Starting app with URL $URL and TOKEN $TOKEN and E2EEKEY $E2EEKEY and AUTOJOIN $AUTOJOIN"
 
 exec "$@"

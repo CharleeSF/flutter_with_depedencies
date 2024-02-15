@@ -5,6 +5,7 @@ import 'package:livekit_example/pages/prejoin.dart';
 import 'package:livekit_example/widgets/text_field.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'dart:io' show Platform;
 
 import '../exts.dart';
 
@@ -47,6 +48,13 @@ class _ConnectPageState extends State<ConnectPage> {
     if (lkPlatformIs(PlatformType.android)) {
       _checkPremissions();
     }
+
+    if (Platform.environment["AUTOJOIN"] == "YES") {
+      Future.delayed(const Duration(milliseconds: 1000), () {
+        _connect(context);
+      });
+    }
+    
   }
 
   @override
@@ -81,15 +89,17 @@ class _ConnectPageState extends State<ConnectPage> {
   // Read saved URL and Token
   Future<void> _readPrefs() async {
     final prefs = await SharedPreferences.getInstance();
-    _uriCtrl.text = const bool.hasEnvironment('URL')
-        ? const String.fromEnvironment('URL')
-        : prefs.getString(_storeKeyUri) ?? '';
-    _tokenCtrl.text = const bool.hasEnvironment('TOKEN')
-        ? const String.fromEnvironment('TOKEN')
-        : prefs.getString(_storeKeyToken) ?? '';
-    _sharedKeyCtrl.text = const bool.hasEnvironment('E2EEKEY')
-        ? const String.fromEnvironment('E2EEKEY')
-        : prefs.getString(_storeKeySharedKey) ?? '';
+
+    Map<String, String> envVars = Platform.environment;
+    
+    _uriCtrl.text = envVars['URL'] ?? '';
+    _tokenCtrl.text = envVars['TOKEN'] ?? '';
+    _sharedKeyCtrl.text = envVars['E2EEKEY'] ?? '';
+
+    print("CONNECTION VARIABLES:");
+    print("_uriCtrL: ${_uriCtrl.text}");
+    print("_tokenCtrl: ${_tokenCtrl.text}");
+    print("_sharedKeyCtrl: ${_sharedKeyCtrl.text}");
     setState(() {
       _simulcast = prefs.getBool(_storeKeySimulcast) ?? true;
       _adaptiveStream = prefs.getBool(_storeKeyAdaptiveStream) ?? true;

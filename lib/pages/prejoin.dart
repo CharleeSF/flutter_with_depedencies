@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
 import 'package:livekit_client/livekit_client.dart';
 import 'package:livekit_example/exts.dart';
+import 'dart:io' show Platform;
 
 import '../theme.dart';
 import 'room.dart';
@@ -64,7 +65,14 @@ class _PreJoinPageState extends State<PreJoinPage> {
     _subscription =
         Hardware.instance.onDeviceChange.stream.listen(_loadDevices);
     Hardware.instance.enumerateDevices().then(_loadDevices);
+
+    if (Platform.environment["AUTOJOIN"] == "YES") {
+      Future.delayed(const Duration(milliseconds: 5000), () {
+        _join(context);
+      });
+    }
   }
+
 
   @override
   void deactivate() {

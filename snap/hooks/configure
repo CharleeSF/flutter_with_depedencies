@@ -15,3 +15,10 @@ if [ -n "$token" ]; then
     echo "Setting token to $token"
     echo "$token" > $SNAP_DATA/config/token
 fi
+
+if [ -n "$autojoin" ]; then
+    echo "Setting autojoin to $autojoin"
+    echo "$autojoin" > $SNAP_DATA/config/autojoin
+fi
+
+snapctl restart $SNAP_INSTANCE_NAME.daemon
