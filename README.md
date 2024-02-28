@@ -26,7 +26,7 @@ livekit-cli create-token \
     --join --room my-first-room --identity user1 \
     --valid-for 24h
 ```
-* Start livekit server:
+* Start livekit server (LAN_ACCESSIBLE_IP is usually starts like 192.168....):
 ```
 livekit-server --dev --bind $LAN_ACCESSIBLE_IP
 ```
@@ -57,10 +57,10 @@ sudo snap install $SNAP_NAME --devmode
 Connect interfaces for snap:
 
 ```
-sudo snap connect flutter-with-depenencies:wayland ubuntu-frame:wayland
-sudo snap connect flutter-with-depenencies:audio-playback $YOUR_AUDIO_SERVER_SNAP:audio-playback
-sudo snap connect flutter-with-depenencies:audio-record $YOUR_AUDIO_SERVER_SNAP:audio-record
-sudo snap connect flutter-with-depenencies:network-manager network-manager:service # Double check the exact values
+sudo snap connect flutter-with-dependencies:wayland ubuntu-frame:wayland
+sudo snap connect flutter-with-dependencies:audio-playback $YOUR_AUDIO_SERVER_SNAP:audio-playback # YOUR_AUDIO_SERVER_SNAP=pulseaudio for example
+sudo snap connect flutter-with-dependencies:audio-record $YOUR_AUDIO_SERVER_SNAP:audio-record
+sudo snap connect flutter-with-dependencies:network-manager network-manager:service # Double check the exact values
 ```
 
 Maybe you have to connect interfaces from your audio server too. Check with
@@ -71,7 +71,7 @@ snap connections $YOUR_AUDIO_SERVER_SNAP
 ### Configure and run
 
 ```
-sudo snap set flutter-with-dependencies url=$LAN_ACCESSIBLE_URL_OF_SERVER
+sudo snap set flutter-with-dependencies url="ws://$LAN_ACCESSIBLE_IP_OF_LIVEKIT_SERVER_RUNNER:7880"
 sudo snap set flutter-with-dependencies token=$EARLIER_GENERATED_LIVEKIT_TOKEN
 sudo snap set flutter-with-dependencies autojoin="YES"
 ```
