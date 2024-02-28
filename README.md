@@ -5,7 +5,7 @@ This app implements a video room using LiveKit's Flutter SDK.
 
 snapcraft.yaml was added for snap packaging.
 
-## Build
+## Build on Ubuntu Desktop
 
 ```sudo snap install snapcraft --classic```
 
@@ -17,7 +17,7 @@ The default stable version was 8.0.3 at time of writing
 
 ### Setup livekit server on Ubuntu Desktop
 
-* Install livekit and start server: https://docs.livekit.io/realtime/self-hosting/local/#start-the-server-in-dev-mode
+* Install livekit: https://docs.livekit.io/realtime/self-hosting/local/#start-the-server-in-dev-mode
 * Install livekit CLI: https://docs.livekit.io/realtime/cli-setup/
 * Create and store token somewhere:
 ```
@@ -33,16 +33,20 @@ livekit-server --dev --bind $LAN_ACCESSIBLE_IP
 
 ### Install + connect interfaces on Ubuntu Core
 
-Install dependencies
+Copy the snap to the device.
+
+SSH into the device.
+
+Install dependencies:
 
 ```
 sudo snap install ubuntu-frame
 
 # Instal audio server, pulseaudio or pulse-server
 sudo snap install pulseaudio --channel=latest/edge
-```
 
-Copy snap to device and ssh into it.
+sudo snap install network-manager
+```
 
 Install snap:
 
@@ -56,6 +60,7 @@ Connect interfaces for snap:
 sudo snap connect flutter-with-depenencies:wayland ubuntu-frame:wayland
 sudo snap connect flutter-with-depenencies:audio-playback $YOUR_AUDIO_SERVER_SNAP:audio-playback
 sudo snap connect flutter-with-depenencies:audio-record $YOUR_AUDIO_SERVER_SNAP:audio-record
+sudo snap connect flutter-with-depenencies:network-manager network-manager:service # Double check the exact values
 ```
 
 Maybe you have to connect interfaces from your audio server too. Check with
