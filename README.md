@@ -1,32 +1,74 @@
-# Flutter snap package displayed on IoT
+# LiveKit Flutter Example
 
-Add snapcraft.yaml to create snap package for basic flutter example.
+The sourcecode is a copy of Livekit's Flutter SDK example code: https://github.com/livekit/client-sdk-flutter/tree/main/example
+This app implements a video room using LiveKit's Flutter SDK.
 
-## Install dependencies
+snapcraft.yaml was added for snap packaging.
 
-```sudo snap install ubuntu-frame --channel=22```
+## Build
 
-```sudo snap install frame-it --classic```
+```sudo snap install snapcraft --classic```
 
-## Make and install package
+The default stable version was 8.0.3 at time of writing
 
-* Clone repository
-* Install snapcraft 7.5.4
-* Build snap package
 ```snapcraft --verbose```
-* Install snap package
-```sudo snap install flutter-with-dependencies_0.1_amd64.snap --devmode```
 
-## Do wayland setup?
+## Setup on Ubuntu Core with server on Ubuntu Desktop
 
-This is listed in the tutorial of the original example: https://discourse.ubuntu.com/t/packaging-a-flutter-application-demo-as-an-iot-gui/29075 and I did it initially for the example, but I didn't do it again.
+### Setup livekit server on Ubuntu Desktop
 
-```/snap/flutter-with-dependencies/current/bin/setup.sh```
+* Install livekit and start server: https://docs.livekit.io/realtime/self-hosting/local/#start-the-server-in-dev-mode
+* Install livekit CLI: https://docs.livekit.io/realtime/cli-setup/
+* Create and store token somewhere:
+```
+livekit-cli create-token \
+    --api-key devkey --api-secret secret \
+    --join --room my-first-room --identity user1 \
+    --valid-for 24h
+```
+* Start livekit server:
+```
+livekit-server --dev --bind $LAN_ACCESSIBLE_IP
+```
 
-## Connect interface
+### Install + connect interfaces on Ubuntu Core
 
-```snap connect flutter-with-dependencies:wayland ubuntu-frame:wayland```
+Install dependencies
 
-## Run
+```
+sudo snap install ubuntu-frame
 
-```frame-it flutter-with-dependencies```
+# Instal audio server, pulseaudio or pulse-server
+sudo snap install pulseaudio --channel=latest/edge
+```
+
+Copy snap to device and ssh into it.
+
+Install snap:
+
+```
+sudo snap install $SNAP_NAME --devmode
+```
+
+Connect interfaces for snap:
+
+```
+sudo snap connect flutter-with-depenencies:wayland ubuntu-frame:wayland
+sudo snap connect flutter-with-depenencies:audio-playback $YOUR_AUDIO_SERVER_SNAP:audio-playback
+sudo snap connect flutter-with-depenencies:audio-record $YOUR_AUDIO_SERVER_SNAP:audio-record
+```
+
+Maybe you have to connect interfaces from your audio server too. Check with
+```
+snap connections $YOUR_AUDIO_SERVER_SNAP
+```
+
+### Configure and run
+
+```
+sudo snap set flutter-with-dependencies url=$LAN_ACCESSIBLE_URL_OF_SERVER
+sudo snap set flutter-with-dependencies token=$EARLIER_GENERATED_LIVEKIT_TOKEN
+sudo snap set flutter-with-dependencies autojoin="YES"
+```
+
+The livekit app should start and join the server.
